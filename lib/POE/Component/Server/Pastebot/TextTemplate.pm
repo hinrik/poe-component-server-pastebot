@@ -1,19 +1,13 @@
-package Bot::Pastebot::TextTemplate;
+package POE::Component::Server::Pastebot::TextTemplate;
 
 use Text::Template;
-use warnings;
+use warnings FATAL => 'all';
 use strict;
-
-
-
 
 sub new {
   my($class) = @_;
   return bless { error => undef }, $class;
 }
-
-
-
 
 sub process {
   my($self, $fh, $vars) = @_;
@@ -37,9 +31,6 @@ sub process {
   return;
 }
 
-
-
-
 sub error {
   my($self, $error) = @_;
   $self->{error} = $error if @_ == 2;
@@ -47,10 +38,6 @@ sub error {
 }
 
 1;
-
-__END__
-
-=pod
 
 =head1 NAME
 
@@ -98,3 +85,5 @@ This method is called whenever an error is encountered.  It returns an error
 message.
 
 =back
+
+=cut

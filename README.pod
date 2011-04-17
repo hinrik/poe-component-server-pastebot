@@ -1,0 +1,137 @@
+=encoding utf8
+
+=head1 NAME
+
+POE::Component::Server::Pastebot - A paste webservice
+
+=head1 SYNOPSIS
+
+ use POE::Component::Server::Pastebot;
+
+ sub _start {
+     my ($self, $session) = @_[OBJECT, SESSION];
+
+     $self->{pastebot} = POE::Component::Server::Pastebot->new(
+         paste_dir => '/tmp/pastes',
+         iname     => 'http://server:8080',
+     );
+     $self->{pastebot}->register($session->ID);
+ }
+
+ sub pastebot_pasted {
+     my ($self, $place, $nick, $address, $summary, $lines, $link)
+         = @_[OBJECT, ARG0..$#_];
+
+     # handle the paste
+ }
+
+=head1 DESCRIPTION
+
+This pastebot runs a webserver where people can paste text. Whenever someone
+does so, you will receive an event with details of the paste.
+
+=head1 METHODS
+
+=head2 C<new>
+
+Creates a new POE::Component::Server::Pastebot object. Takes the following
+optional arguments:
+
+B<'paste_dir'> (required), where the pastes will be stored. This directory
+will be created if it doesn't exist.
+
+B<'iname'> (required), what your server is known as on the internet (e.g.
+'http://server.com').
+
+B<'port'> (optional), the port where the webservice will run. Defaults to
+8888.
+
+B<'iface'> (optional), the interface on which the webservice will listen.
+Defaults to '0.0.0.0'.
+
+B<'proxy'> (optional), if you are running this behind a proxy, set the proxy
+IP address here.
+
+B<'static_dir'> (optional), the directory that contains static files that will
+be used by the pastebot's built-in web server. Templates, graphics, and style
+sheets for the various served pages go here. It is essentially the Pastebot
+server's document root. Defaults to the directory which came with the
+module.
+
+B<'template'> (optional), the class that implements the templating for
+generated pages. The class must define specific methods, see
+L<POE::Component::Server::Pastebot::TextTemplate|POE::Component::Server::Pastebot::TextTemplate>
+for which methods and return values are expected.
+
+B<'check'> (optional), how often to check for expired pastes. The value is
+the number of seconds between each check. 3600 is an hour, 86400 is a day.
+Default is 3600.
+
+B<'count'> (optional), a limit on the number of pastes a pastebot's database
+may hold, regardless whether they're too young to expire. This limit will be
+disabled by setting it to zero (which is the default).
+
+B<'expire'> (optional), the maximum limit for the age of pastes to retain.
+This limit may be disabled if it is set to zero. If set, however, pastes that
+are older than this value in seconds will be purged during a periodic
+expiration check. The default is 864000.
+
+=head2 C<register>
+
+Registers a session for receiving paste events. Takes one argument, a POE
+session id.
+
+=head2 C<unregister>
+
+Unregisters a session. Takes one argument, a POE session id.
+
+=head2 C<add_place>
+
+Adds a place which pasters can select when pasting. Takes one argument, the
+name of the place.
+
+=head2 C<add_place>
+
+Removes a place. Takes one argument, the name of the place.
+
+=head2 C<shutdown>
+
+Takes no arguments. Unregisters all sessions and shuts down the web server.
+
+=head1 OUTPUT
+
+=head2 C<pastebot_pasted>
+
+Sent to registered sessions after a new paste has been created. Has the
+following arguments:
+
+=over 4
+
+=item * C<ARG0>: the place (if any) selected by the user
+
+=item * C<ARG1>: the nickname (if any) of the user
+
+=item * C<ARG2>: the IP address of the user
+
+=item * C<ARG3>: a summary of the paste
+
+=item * C<ARG4>: the number of lines in the paste
+
+=item * C<ARG4>: a link to the paste
+
+=back
+
+=head1 AUTHOR
+
+Rocco Caputo
+
+Hinrik E<Ouml>rn SigurE<eth>sson, hinrik.sig@gmail.com
+
+=head1 LICENSE AND COPYRIGHT
+
+Copyright 2010 Rocco Caputo, Hinrik E<Ouml>rn SigurE<eth>sson
+
+This program is free software, you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
